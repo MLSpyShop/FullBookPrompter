@@ -16,11 +16,34 @@ const PORT = 3000;
 
 app.use(express.json({ limit: "50mb" }));
 
-// Lazy Gemini client getter
-function getGeminiClient(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
+// Extract user's API key from incoming request headers, body, or user environment variables
+function extractUserApiKey(req?: express.Request): string | undefined {
+  if (req) {
+    const headerKey =
+      req.headers["x-goog-api-key"] ||
+      req.headers["x-api-key"] ||
+      (typeof req.headers["authorization"] === "string" && req.headers["authorization"].startsWith("Bearer ")
+        ? req.headers["authorization"].slice(7).trim()
+        : undefined);
+
+    if (typeof headerKey === "string" && headerKey.trim()) {
+      return headerKey.trim();
+    }
+
+    if (req.body && typeof req.body.apiKey === "string" && req.body.apiKey.trim()) {
+      return req.body.apiKey.trim();
+    }
+  }
+
+  // Fall back to the user's configured GEMINI_API_KEY from Settings > Secrets
+  return process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+}
+
+// User-scoped Gemini client getter (uses developer/user API key, never admin/service account)
+function getGeminiClient(userApiKey?: string): GoogleGenAI | null {
+  const apiKey = userApiKey || extractUserApiKey();
   if (!apiKey) {
-    console.warn("GEMINI_API_KEY is not set. Offline / fallback book generation will be used.");
+    console.warn("User GEMINI_API_KEY is not set. Offline / fallback book generation will be used.");
     return null;
   }
   return new GoogleGenAI({
@@ -34,10 +57,12 @@ function getGeminiClient(): GoogleGenAI | null {
 }
 
 // Health check
-app.get("/api/health", (_req, res) => {
+app.get("/api/health", (req, res) => {
+  const userApiKey = extractUserApiKey(req);
   res.json({
     status: "ok",
-    hasApiKey: Boolean(process.env.GEMINI_API_KEY),
+    apiScope: "user-api",
+    hasUserApiKey: Boolean(userApiKey),
     timestamp: new Date().toISOString(),
   });
 });
@@ -50,10 +75,11 @@ app.post("/api/research-sources", async (req, res) => {
       return res.status(400).json({ error: "Subject is required" });
     }
 
-    const ai = getGeminiClient();
+    const userApiKey = extractUserApiKey(req);
+    const ai = getGeminiClient(userApiKey);
     if (!ai) {
       return res.status(503).json({
-        error: "GEMINI_API_KEY is missing. Please set your key in Settings > Secrets.",
+        error: "User GEMINI_API_KEY is missing. Please set your key in Settings > Secrets.",
       });
     }
 
@@ -108,7 +134,8 @@ app.post("/api/generate-book", async (req, res) => {
     };
 
     const chapterCount = 6;
-    const ai = getGeminiClient();
+    const userApiKey = extractUserApiKey(req);
+    const ai = getGeminiClient(userApiKey);
 
     if (ai) {
       const systemPrompt = `You are FULLBOOKPROMPTER, a distinguished author, research scholar, and master book designer.
@@ -429,10 +456,11 @@ Generate ${chapterCount} comprehensive chapters. Return a valid JSON object matc
 app.post("/api/generate-chapter", async (req, res) => {
   try {
     const { subject, bookTitle, authorName, chapterNumber, chapterTitle, currentAbstract } = req.body;
-    const ai = getGeminiClient();
+    const userApiKey = extractUserApiKey(req);
+    const ai = getGeminiClient(userApiKey);
     if (!ai) {
       return res.status(503).json({
-        error: "GEMINI_API_KEY is missing.",
+        error: "User GEMINI_API_KEY is missing.",
       });
     }
 

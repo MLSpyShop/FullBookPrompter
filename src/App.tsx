@@ -130,9 +130,15 @@ export default function App() {
       let bookData: BookProject | null = null;
 
       try {
+        const clientApiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY;
+        const requestHeaders: Record<string, string> = { "Content-Type": "application/json" };
+        if (clientApiKey) {
+          requestHeaders["x-goog-api-key"] = clientApiKey;
+        }
+
         const response = await fetch("/api/generate-book", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: requestHeaders,
           body: JSON.stringify({
             topic: cleanTopic,
             author: cleanAuthor,
