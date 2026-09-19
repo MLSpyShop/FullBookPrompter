@@ -1,0 +1,6 @@
+{
+  "name": "FullBookPrompter - 6x9 Trade PDF Monograph Generator",
+  "description": "Generate complete, academic, print-ready 6x9 trade monographs and compile directly to PDF via print.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
