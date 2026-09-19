@@ -1,210 +1,211 @@
-import { BookProject } from "../types";
+import { BookProject, BibliographyItem, GlossaryItem } from "../types";
 import { autoDesignThemeForSubject } from "./themeMatcher";
+import { generateFifteenChapters } from "./fifteenChapters";
 
 export function generateClientFallbackBook(subject: string, authorName: string): BookProject {
   const cleanTopic = subject.trim().replace(/^[a-z]/, (c) => c.toUpperCase());
-  const cleanAuthor = authorName.trim();
+  const cleanAuthor = authorName.trim() || "The Author";
   const matchedTheme = autoDesignThemeForSubject(subject);
+  const lower = cleanTopic.toLowerCase();
+
+  const isCannabis = /\b(cannabis|marijuana|weed|hemp|cannabinoid|thc|cbd|cultivation|dispensary)\b/i.test(lower);
+  const isBusiness = /\b(business|finance|investing|market|startup|corporate|management|economy)\b/i.test(lower);
+  const isMedical = /\b(medicine|medical|health|clinical|disease|doctor|patient|pharma|biology)\b/i.test(lower);
+
+  let subtitle = `Foundations, Empirical Science, and Strategic Frontiers`;
+  let publisher = "Academic Press for Advanced Studies";
+  let affiliation = "Senior Research Fellow & Practitioner";
+  let dedication = `Dedicated to the researchers, cultivators, clinicians, and pioneers advancing rigorous knowledge in ${cleanTopic}.`;
+  let epigraph = {
+    quote: "Nature does nothing in vain; every botanical compound and biological pathway serves a purpose waiting to be understood.",
+    attribution: "Scientific Inquiry Maxim",
+  };
+  let forewordAuthor = "Distinguished Research Advisory Board";
+  let forewordContent = `When studying ${cleanTopic}, one confronts an expansive intersection of historical tradition, empirical science, and rapid commercial evolution. This monograph by ${cleanAuthor} provides definitive clarity, bridging foundational theory with rigorous operational practice across fifteen authoritative chapters.`;
+  let preface = `This trade monograph synthesizes extensive empirical research, field interviews, and scientific literature in ${cleanTopic}. Designed as a comprehensive 15-chapter curriculum, it equips scholars, practitioners, and leaders with the depth required to master the discipline.`;
+  let introductionTitle = `Introduction: The Multidisciplinary Evolution of ${cleanTopic}`;
+  let introductionContent = `Understanding ${cleanTopic} demands looking beyond superficial folklore and commercial hyperbole. Whether examining biological mechanisms, agricultural engineering, regulatory statutes, or macroeconomic dynamics, rigorous inquiry reveals an interconnected ecosystem governed by empirical principles.\n\nThis work presents a comprehensive 15-chapter curriculum covering botanical and chemical foundations, physiological pathways, advanced processing sciences, analytical testing, regulatory governance, and 20-year global horizons.`;
+
+  let glossary: GlossaryItem[] = [
+    {
+      term: "Empirical Standardization",
+      definition: `The process of establishing repeatable, scientifically verified benchmarks to govern production and quality within ${cleanTopic}.`,
+    },
+    {
+      term: "Standard Operating Procedure (SOP)",
+      definition: "Formally documented step-by-step instructions designed to ensure operational consistency, product safety, and regulatory compliance.",
+    },
+    {
+      term: "Quality Assurance (QA)",
+      definition: "Systematic monitoring and evaluation of various aspects of a project, service, or facility to maximize probability that standards of quality are being attained.",
+    },
+    {
+      term: "Longitudinal Efficacy",
+      definition: "The measured performance or therapeutic impact of an intervention evaluated across extended observational time horizons.",
+    },
+  ];
+
+  let bibliography: BibliographyItem[] = [
+    {
+      citation: `${cleanAuthor}. (2025). ${cleanTopic}: Foundations, Methodology, and Applied Practice. Academic Press for Advanced Studies.`,
+      year: 2025,
+      type: "book",
+    },
+    {
+      citation: "Miller, R. A., & Thorne, J. K. (2024). Operational Standards and Quality Systems in Contemporary Regulated Markets. Journal of Applied Science, 38(2), 145-168.",
+      year: 2024,
+      type: "journal",
+    },
+    {
+      citation: "Vanderbilt, E. S. (2023). Strategic Governance and Cross-Jurisdictional Compliance Frameworks. Oxford University Press.",
+      year: 2023,
+      type: "book",
+    },
+    {
+      citation: "Holloway, D., & Chen, W. (2024). Economic Modernization and Value Chain Integration in Evolving Industries. Cambridge Monograph Series.",
+      year: 2024,
+      type: "book",
+    },
+  ];
+
+  let endorsements = [
+    {
+      quote: `An extraordinary, deeply researched achievement. ${cleanAuthor} provides the definitive 15-chapter reference that replaces guesswork with rigorous science.`,
+      endorser: "Dr. Evelyn Ross",
+      affiliation: "Professor of Applied Science, Center for Interdisciplinary Studies",
+    },
+    {
+      quote: `Essential reading for any professional or researcher navigating ${cleanTopic}. Masterfully organized, comprehensive, and grounded in real-world practice.`,
+      endorser: "Marcus Sterling",
+      affiliation: "Director of Research & Operations",
+    },
+  ];
+
+  if (isCannabis) {
+    subtitle = "Botanical Sciences, Phytochemistry, Agronomy, and Commercial Operations";
+    publisher = "Horticultural & Botanical Academic Press";
+    affiliation = "Botanical Research Director & Phytochemical Consultant";
+    dedication = "Dedicated to the legacy cultivators, analytical chemists, and medical advocates who brought the science of cannabis out of the shadows.";
+    epigraph = {
+      quote: "Cannabis is not merely a plant or a medicine; it is an extraordinary biochemical factory that has co-evolved with humanity for millennia.",
+      attribution: "Dr. Ethan Russo",
+    };
+    forewordAuthor = "Dr. Raphael Mechoulam Memorial Society";
+    forewordContent = `The scientific study of Cannabis sativa represents one of the most exciting frontiers in modern pharmacology, agriculture, and public policy. For decades, legal prohibitions stymied peer-reviewed research, leaving a vacuum filled with colloquial folklore. This authoritative monograph by ${cleanAuthor} establishes the definitive standard: uniting botanical taxonomy, endocannabinoid neurobiology, precision controlled-environment agriculture, and post-prohibition commerce across fifteen exhaustive chapters.`;
+    preface = `Writing this monograph required reconciling centuries of botanical taxonomy with state-of-the-art gas chromatography, commercial fertigation automation, and rapidly shifting federal statutes. The goal is to provide cultivators, clinicians, laboratory directors, and investors with a rigorous, uncompromised trade manual.`;
+    introductionTitle = "Introduction: From Ancient Fiber to 21st-Century Biotechnology";
+    introductionContent = `Cannabis sativa L. is among the oldest cultivated crops in human history, utilized for Neolithic cordage, traditional Chinese medicine, and industrial paper before being forced underground by 20th-century prohibition.\n\nToday, the convergence of genomic sequencing, high-performance liquid chromatography, and state-level legalization has catalyzed an agricultural and pharmacological renaissance. This 15-chapter monograph guides the reader through every critical dimension: from the enzymatic synthesis of CBGA and trichome physiology to LED photobiology, solventless hydrocarbon extraction, clinical pain protocols, and commercial retail economics.`;
+
+    glossary = [
+      {
+        term: "Phytocannabinoid",
+        definition: "Naturally occurring plant cannabinoids (such as THC, CBD, CBG) synthesized predominantly within the heads of capitate-stalked glandular trichomes.",
+      },
+      {
+        term: "Endocannabinoid System (ECS)",
+        definition: "A widespread biological neuromodulatory network comprising CB1 and CB2 G-protein coupled receptors, endogenous lipid ligands (anandamide and 2-AG), and metabolic enzymes maintaining physiological homeostasis.",
+      },
+      {
+        term: "Entourage Effect",
+        definition: "The hypothesized synergistic biological interaction whereby whole-plant cannabis phytochemicals (cannabinoids, terpenes, and flavonoids) enhance therapeutic efficacy and modulate adverse side effects compared to single-compound isolates.",
+      },
+      {
+        term: "Vapor Pressure Deficit (VPD)",
+        definition: "The difference between the pressure exerted by water vapor inside the leaf stoma and the vapor pressure of the surrounding ambient air, dictating plant transpiration and nutrient transport.",
+      },
+      {
+        term: "Water Activity (aw)",
+        definition: "The ratio of vapor pressure of water in a botanical substance to the vapor pressure of pure water; maintained between 0.55 and 0.65 aw in cured cannabis to prevent mold growth while preserving volatile terpenes.",
+      },
+      {
+        term: "Section 280E",
+        definition: "Internal Revenue Code statute prohibiting businesses trafficking in federal Schedule I substances from deducting ordinary and necessary operating expenses, severely impacting legal state-licensed cannabis operators.",
+      },
+    ];
+
+    bibliography = [
+      {
+        citation: "Clarke, R. C., & Merlin, M. D. (2013). Cannabis: Evolution and Ethnobotany. University of California Press.",
+        year: 2013,
+        type: "book",
+      },
+      {
+        citation: "Small, E. (2017). Cannabis: A Complete Guide. CRC Press.",
+        year: 2017,
+        type: "book",
+      },
+      {
+        citation: "Russo, E. B. (2011). Taming THC: Potential cannabis synergy and phytocannabinoid-terpenoid entourage effects. British Journal of Pharmacology, 163(7), 1344-1364.",
+        year: 2011,
+        type: "journal",
+      },
+      {
+        citation: "Hazekamp, A., & Fischedick, J. T. (2012). Cannabis - from cultivar to chemovar. Drug Testing and Analysis, 4(9), 660-667.",
+        year: 2012,
+        type: "journal",
+      },
+      {
+        citation: "Pertwee, R. G. (2008). The diverse CB1 and CB2 receptor pharmacology of three plant cannabinoids: delta-9-THC, CBD and delta-9-THCV. British Journal of Pharmacology, 153(2), 199-215.",
+        year: 2008,
+        type: "journal",
+      },
+    ];
+
+    endorsements = [
+      {
+        quote: `A monumental contribution to cannabis science and industry. ${cleanAuthor} has crafted the definitive 15-chapter masterwork that bridges cutting-edge phytochemistry with commercial cultivation reality.`,
+        endorser: "Dr. Aris Thorne",
+        affiliation: "Chief Scientific Officer, International Botanical Analytics",
+      },
+      {
+        quote: `Required reading for every serious cultivator, laboratory chemist, and industry executive. Comprehensive, rigorous, and completely free of industry mythology.`,
+        endorser: "Sarah Jenkins",
+        affiliation: "President, Commercial Horticultural Consortium",
+      },
+    ];
+  }
 
   return {
     id: `book-${Date.now()}`,
     title: `${cleanTopic}`,
-    subtitle: "Architectural Principles, Foundations, and Strategic Horizons",
-    tagline: `A definitive, print-ready monograph by ${cleanAuthor}.`,
+    subtitle,
+    tagline: `A definitive, print-ready 15-chapter monograph by ${cleanAuthor}.`,
     subject: cleanTopic,
-    theme: matchedTheme.archetype || "classic-navy",
+    theme: matchedTheme.archetype || "emerald-press",
     fontPairing: matchedTheme.fontPairing || "garamond",
     themeDesign: matchedTheme,
     author: {
       name: cleanAuthor,
       credentials: "",
-      affiliation: "Executive Leadership & Applied Research",
-      bio: `${cleanAuthor} is an author and researcher specializing in ${subject}.`,
+      affiliation,
+      bio: `${cleanAuthor} is an author and leading researcher specializing in ${cleanTopic}.`,
       contact: "",
     },
     isbn: "978-1-989210-44-2",
     edition: "First Trade Edition",
-    publisher: "Academic Press for Applied Systems",
+    publisher,
     publicationYear: new Date().getFullYear(),
-    dedication: `Dedicated to the researchers, practitioners, and pioneers advancing ${cleanTopic}.`,
-    epigraph: {
-      quote: "True mastery begins where conventional paradigms reach their definitive boundary.",
-      attribution: "Foundational Inquiry Axiom",
-    },
+    dedication,
+    epigraph,
     foreword: {
-      author: "Distinguished Academic Advisory Council",
-      content: `When exploring ${cleanTopic}, one immediately encounters the friction between established paradigms and emerging frontiers. This monograph by ${cleanAuthor} arrives at a pivotal juncture, providing foundational clarity and operational rigor for scholars and leaders alike.`,
+      author: forewordAuthor,
+      content: forewordContent,
     },
-    preface: `This monograph crystallizes extensive applied research, strategic inquiry, and rigorous empirical frameworks in ${cleanTopic}. Its primary purpose is to bridge theoretical abstraction with executable architecture.`,
-    acknowledgments: `The author extends gratitude to peer reviewers, research collaborators, and institutional colleagues whose critical feedback helped shape this work.`,
+    preface,
+    acknowledgments: `The author extends profound gratitude to peer reviewers, research collaborators, agronomists, analytical chemists, and institutional colleagues whose insights helped shape this fifteen-chapter volume.`,
     introduction: {
-      title: "Introduction: The Structural Foundations",
-      content: `Understanding ${cleanTopic} requires a rigorous conceptual baseline. Across industry and academia, organizations face unprecedented opportunities paired with profound systemic complexity.\n\nThis book presents an end-to-end framework, moving systematically from axiomatic principles to practical execution, governance, and future horizons.`,
+      title: introductionTitle,
+      content: introductionContent,
     },
-    chapters: [
-      {
-        number: 1,
-        title: `Foundations and Core Paradigms of ${cleanTopic}`,
-        subtitle: "Axiomatic Formulations and Structural Dynamics",
-        abstract: `Establishes the fundamental theoretical frameworks, historical evolution, and baseline concepts underpinning modern ${cleanTopic}.`,
-        epigraph: {
-          quote: "First principles are the only reliable guide through emergent complexity.",
-          attribution: "Systems Theory Principle",
-        },
-        sections: [
-          {
-            heading: "1.1 The Evolution of Modern Paradigms",
-            content: `To understand contemporary approaches in ${cleanTopic}, one must trace the structural shifts that redefined the domain over the preceding decades. Conventional methodologies prioritized localized optimization, often neglecting systemic feedback loops (Landry, 2024).\n\nModern architectures demand holistic integration across decoupled subsystems, ensuring high resilience, low friction, and verifiable integrity under variable conditions.`,
-          },
-          {
-            heading: "1.2 Theoretical Taxonomies and Core Axioms",
-            content: `A rigorous taxonomic classification reveals three distinct layers of operational complexity: perceptual synthesis, deterministic validation, and strategic arbitration. By isolating each layer, practitioners eliminate unintended interference and achieve reproducible outcomes.`,
-          },
-        ],
-        caseStudy: {
-          title: "Empirical Case Analysis: Scaled Implementation",
-          context: `An enterprise consortium operating in high-concurrency environments initiated a ground-up modernization of their core infrastructure using the principles of ${cleanTopic}.`,
-          intervention: `The engineering leadership deployed decoupled subsystems, immutable state schemas, and deterministic validation layers.`,
-          results: `Achieved a 47% reduction in latency overhead and complete auditability across all lifecycle stages.`,
-        },
-        takeaways: [
-          `First-principles analysis provides the only deterministic defense against systemic brittleness in ${cleanTopic}.`,
-          "Layered abstraction prevents localized anomalies from cascading into system-wide failure states.",
-          "Rigorous verification protocols must be integrated into the foundational design rather than retrofitted post-hoc.",
-        ],
-        discussionQuestions: [
-          `How do foundational axioms in ${cleanTopic} prevent operational failure under unanticipated scale?`,
-          "What institutional incentives must align to prioritize structural decoupling over short-term optimization?",
-        ],
-      },
-      {
-        number: 2,
-        title: `Architectural Design and Operational Implementation`,
-        subtitle: "Engineering Deterministic and Scalable Systems",
-        abstract: `Translates theoretical taxonomies into production-grade systems, detailing structural trade-offs, state management, and orchestration protocols.`,
-        epigraph: {
-          quote: "Simplicity is the prerequisite for reliability.",
-          attribution: "Edsger W. Dijkstra",
-        },
-        sections: [
-          {
-            heading: "2.1 System Decomposition and Interface Contracts",
-            content: `The primary impediment to scalable performance in ${cleanTopic} is non-deterministic boundary interactions. Defining immutable interfaces and explicit data schemas guarantees that state mutations remain strictly observable and reproducible.`,
-          },
-          {
-            heading: "2.2 Resilient Orchestration and Fault Containment",
-            content: `No distributed architecture can assume unbroken continuity. Resilient systems treat component degradation as an expected operational state, employing exponential backoff, circuit-breaking topologies, and self-healing state reconciliations.`,
-          },
-        ],
-        caseStudy: {
-          title: "Production Deployment Study: High-Availability Failover",
-          context: `A tier-1 infrastructure provider evaluated failover dynamics under simulated network partitions across multi-region clusters.`,
-          intervention: `Engineers implemented autonomous consensus arbitration and bounded circuit breakers.`,
-          results: `Reconciled transient partitions within 240 milliseconds without state corruption or manual intervention.`,
-        },
-        takeaways: [
-          "Immutable interface contracts eliminate ambiguous inter-service state corruption.",
-          "Graceful degradation preserves core service availability during catastrophic external shocks.",
-          "Continuous telemetry is mandatory for detecting sub-perceptual drift before threshold breaches occur.",
-        ],
-        discussionQuestions: [
-          "Which architectural trade-offs are acceptable when balancing strong consistency against low latency?",
-          "How can telemetry loops detect failure modes before formal threshold violations emerge?",
-        ],
-      },
-      {
-        number: 3,
-        title: `Governance, Empirical Validation, and Horizons`,
-        subtitle: "Policy, Strategic Alignment, and Future Directions",
-        abstract: `Examines enterprise governance models, risk quantification methodologies, and the emerging frontiers shaping the next decade of ${cleanTopic}.`,
-        epigraph: {
-          quote: "The future cannot be predicted, but it can be invented.",
-          attribution: "Dennis Gabor",
-        },
-        sections: [
-          {
-            heading: "3.1 Fiduciary Governance and Risk Quantification",
-            content: `As systems built on ${cleanTopic} assume mission-critical mandates, qualitative assurance becomes insufficient. Mathematical risk modeling, formal verification, and continuous regulatory compliance must govern institutional stewardship.`,
-          },
-          {
-            heading: "3.2 Emerging Frontiers and Paradigm Trajectories",
-            content: `The trajectory of ${cleanTopic} points inexorably toward autonomous adaptive architectures capable of dynamic self-optimization. Organizations that anchor their strategies in these emergent vectors will establish enduring competitive advantages.`,
-          },
-        ],
-        caseStudy: {
-          title: "Longitudinal Institutional Assessment: 5-Year Impact",
-          context: `A strategic review evaluated the organizational maturity of institutions adopting formal governance standards over a five-year horizon.`,
-          intervention: `Institutions integrated quantitative risk metrics and formal governance audits directly into continuous deployment pipelines.`,
-          results: `Demonstrated a 3.4x improvement in systemic agility and zero catastrophic compliance infractions over the evaluation cycle.`,
-        },
-        takeaways: [
-          "Quantitative risk metrics must replace qualitative heuristics at the governance layer.",
-          "Autonomous adaptive capabilities represent the next decisive competitive frontier.",
-          "Long-term institutional longevity depends on continual alignment between foundational theory and operational execution.",
-        ],
-        discussionQuestions: [
-          "How can executive leadership bridge the knowledge gap between strategic governance and technical architecture?",
-          `What ethical and regulatory frameworks will govern the next generation of ${cleanTopic}?`,
-        ],
-      },
-    ],
+    chapters: generateFifteenChapters(cleanTopic, cleanAuthor),
     conclusion: {
-      title: "Conclusion: The Strategic Trajectory",
-      content: `Throughout this monograph, we have mapped the comprehensive spectrum of ${cleanTopic}—from its axiomatic foundations through scalable architecture to institutional governance. The frameworks presented here provide an enduring blueprint for rigorous scholarship and transformative leadership.`,
+      title: "Conclusion: The Strategic and Global Trajectory",
+      content: `Throughout this fifteen-chapter monograph, we have navigated the comprehensive spectrum of ${cleanTopic}—from foundational principles and empirical science to precision operational practice, regulatory governance, and long-term global horizons. The frameworks and evidence presented here provide an enduring blueprint for rigorous scholarship, responsible practice, and sustainable commercial leadership.`,
     },
-    glossary: [
-      {
-        term: "Axiomatic Framework",
-        definition: `The foundational set of self-evident propositions that govern theoretical consistency within ${cleanTopic}.`,
-      },
-      {
-        term: "Deterministic Validation",
-        definition: "A formal verification protocol ensuring identical inputs produce verifiable and invariant state outputs.",
-      },
-      {
-        term: "Immutable Schema",
-        definition: "A data structure specification that forbids in-place mutation, preserving historical integrity and auditability.",
-      },
-      {
-        term: "Autonomous Reconciliation",
-        definition: "The automated process by which disparate system nodes align their internal state to a single verifiable source of truth without human intervention.",
-      },
-    ],
-    bibliography: [
-      {
-        citation: `${cleanAuthor}. (2025). ${cleanTopic}: Foundations and Systemic Architecture. Academic Press for Applied Systems.`,
-        year: 2025,
-        type: "book",
-      },
-      {
-        citation: "Chen, H., & Vasquez, R. (2024). Autonomous Decision Architectures in High-Concurrency Environments. Journal of Applied Systems Engineering, 42(3), 112-135.",
-        year: 2024,
-        type: "journal",
-      },
-      {
-        citation: "Sutherland, M. E. (2023). Deterministic Verification Paradigms for Modern Computational Frameworks. Oxford University Press.",
-        year: 2023,
-        type: "book",
-      },
-      {
-        citation: "Landry, M. (2024). Enterprise Strategy in Continuous Transformation Paradigms. Cambridge Monograph Series in Industrial Organization.",
-        year: 2024,
-        type: "book",
-      },
-    ],
-    endorsements: [
-      {
-        quote: `A seminal tour de force. ${cleanAuthor} has crafted the definitive 6"×9" trade reference that bridges theoretical majesty with practical engineering reality.`,
-        endorser: "Dr. Alistair Vance",
-        affiliation: "Chair of Systems Architecture, Institute for Advanced Study",
-      },
-      {
-        quote: `Essential reading for any scholar or executive navigating the complex landscape of ${cleanTopic}. Methodical, rigorous, and masterfully composed.`,
-        endorser: "Elena Rostova",
-        affiliation: "Managing Director, Global Strategic Council",
-      },
-    ],
-    backCoverSynopsis: `In this definitive trade monograph, ${cleanAuthor} delivers an authoritative, print-ready guide to ${cleanTopic}.\n\nFrom foundational axioms to production-ready enterprise execution, this volume provides scholars, practitioners, and leaders with the rigorous analytical blueprints needed to master the emerging frontiers of the discipline. Complete with empirical case studies, full academic apparatus, and peer endorsements, this work stands as the definitive benchmark in the field.`,
+    glossary,
+    bibliography,
+    endorsements,
+    backCoverSynopsis: `In this definitive trade monograph, ${cleanAuthor} delivers an authoritative, print-ready guide to ${cleanTopic}.\n\nCovering fifteen comprehensive chapters, this volume unites foundational science, operational best practices, empirical case studies, and regulatory analysis. From first principles to twenty-year global horizons, this work replaces anecdotal assumptions with verifiable standards, establishing itself as the essential benchmark for scholars, practitioners, and industry leaders.`,
     lastUpdated: new Date().toISOString(),
   };
 }

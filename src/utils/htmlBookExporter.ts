@@ -1,7 +1,65 @@
 import { BookProject } from "../types";
 import { autoDesignThemeForSubject, getFontFamilyCss } from "./themeMatcher";
 
+function getLibraryOfCongressMetadata(book: BookProject): { subjects: string; lcc: string; ddc: string; bisac: string; categorySubtitle: string } {
+  const text = `${book.subject || ""} ${book.title || ""} ${book.subtitle || ""}`.toLowerCase();
+  
+  if (/\b(cannabis|marijuana|hemp|weed|cannabinoid|thc|cbd|terpene|dispensary|cultivation)\b/i.test(text)) {
+    return {
+      subjects: "Cannabis -- Therapeutic use. | Cannabis industry -- Law and legislation. | Cannabinoids -- Physiological effect. | Agricultural innovations.",
+      lcc: `LCC RS165.C2 (Pharmacy / Therapeutics) | HD9019.C2 (Cannabis Industry) ${book.publicationYear}`,
+      ddc: "DDC 615.7827 (Pharmacology) / 338.17379 (Industry)",
+      bisac: "GARDENING / BOTANY / MEDICAL / PHARMACOLOGY / BUSINESS",
+      categorySubtitle: "An Authoritative Monograph on Cannabis Science, Agriculture & Commerce",
+    };
+  }
+  if (/\b(medicine|medical|health|clinical|pharma|biology|disease|therapy|nursing)\b/i.test(text)) {
+    return {
+      subjects: "Medicine -- Practice. | Clinical medicine -- Research. | Therapeutics. | Health policy.",
+      lcc: `LCC R724 .M43 ${book.publicationYear}`,
+      ddc: "DDC 610.72 -- dc23",
+      bisac: "MEDICAL / CLINICAL MEDICINE / GENERAL",
+      categorySubtitle: `An Authoritative Monograph on ${book.subject || "Clinical Science & Medicine"}`,
+    };
+  }
+  if (/\b(business|finance|economics|investing|market|management|leadership|corporate)\b/i.test(text)) {
+    return {
+      subjects: "Strategic planning. | Industrial management. | Corporate finance. | Organizational behavior.",
+      lcc: `LCC HD30.28 .B87 ${book.publicationYear}`,
+      ddc: "DDC 658.4012 -- dc23",
+      bisac: "BUSINESS & ECONOMICS / MANAGEMENT & STRATEGY",
+      categorySubtitle: `An Authoritative Monograph on ${book.subject || "Business & Economics"}`,
+    };
+  }
+  if (/\b(history|historical|civilization|war|revolution|ancient|politics)\b/i.test(text)) {
+    return {
+      subjects: `${book.subject || "History"} -- Historical perspectives. | Social change. | Political economy.`,
+      lcc: `LCC D16.8 .H57 ${book.publicationYear}`,
+      ddc: "DDC 900 -- dc23",
+      bisac: "HISTORY / HISTORICAL STUDY & METHODOLOGY",
+      categorySubtitle: `An Authoritative Monograph on ${book.subject || "Historical Studies"}`,
+    };
+  }
+  if (/\b(ai|artificial intelligence|machine learning|computer|software|algorithm|cyber)\b/i.test(text)) {
+    return {
+      subjects: "Artificial intelligence. | Machine learning. | Software engineering. | Computer systems.",
+      lcc: `LCC Q335 .A47 ${book.publicationYear}`,
+      ddc: "DDC 006.3 -- dc23",
+      bisac: "COMPUTERS / ARTIFICIAL INTELLIGENCE / SYSTEMS",
+      categorySubtitle: "A Monograph in Frontier Cognitive Systems",
+    };
+  }
+  return {
+    subjects: `${book.subject || "Research"} -- Methodology. | Interdisciplinary research. | Applied theory.`,
+    lcc: `LCC H62 .M66 ${book.publicationYear}`,
+    ddc: "DDC 001.4 -- dc23",
+    bisac: "GENERAL SCHOLARLY MONOGRAPHS & APPLIED SCIENCES",
+    categorySubtitle: `An Authoritative Monograph on ${book.subject || book.title}`,
+  };
+}
+
 export function generateStandaloneBookHtml(book: BookProject): string {
+  const locMeta = getLibraryOfCongressMetadata(book);
   // Automatically select/resolve theme design matching book subject
   const effectiveTheme = book.themeDesign || autoDesignThemeForSubject(book.subject || book.title);
   const themeColors = {
@@ -889,7 +947,7 @@ export function generateStandaloneBookHtml(book: BookProject): string {
   <section class="page-sheet title-page" id="title-page">
     <div style="margin-top: 0.3in;">
       <div style="font-family: var(--font-sans); font-size: 8pt; letter-spacing: 0.2em; text-transform: uppercase; color: var(--book-accent); margin-bottom: 8px;">
-        A Monograph in Frontier Cognitive Systems
+        ${escapeXml(locMeta.categorySubtitle)}
       </div>
       <h1>${escapeXml(book.title)}</h1>
       <div class="title-page-subtitle">${escapeXml(book.subtitle)}</div>
@@ -924,14 +982,14 @@ export function generateStandaloneBookHtml(book: BookProject): string {
       Title: ${escapeXml(book.title)}: ${escapeXml(book.subtitle)} / ${escapeXml(book.author.name)}.<br>
       Description: First edition. | New York : ${escapeXml(book.publisher)}, ${book.publicationYear}. | Includes bibliographical references and index.<br>
       Identifiers: ISBN ${escapeXml(book.isbn)} (trade paper) | ISBN 978-1-962841-10-0 (ebook)<br>
-      Subjects: LCSH: Artificial intelligence. | Multiagent systems. | Cognitive architectures. | Corporate governance.<br>
-      Classification: LCC Q335 .L36 ${book.publicationYear} | DDC 006.3—dc23</p>
+      Subjects: LCSH: ${escapeXml(locMeta.subjects)}<br>
+      Classification: ${escapeXml(locMeta.lcc)} | ${escapeXml(locMeta.ddc)}</p>
     </div>
 
     <p>ISBN-13: ${escapeXml(book.isbn)}<br>
     Printed in the United States of America on acid-free, archival-quality paper.<br>
     Set in 11.5 pt EB Garamond with Cinzel Display headings.<br>
-    Book architecture & typographical design by FULLBOOKPROMPTER Systems.<br>
+    Book architecture & typographical design by Academic Press Systems.<br>
     10 9 8 7 6 5 4 3 2 1</p>
   </section>
 
@@ -995,7 +1053,7 @@ export function generateStandaloneBookHtml(book: BookProject): string {
             ${escapeXml(ch.title)}
           </span>
           <span class="toc-dots"></span>
-          <span class="toc-page">${15 + idx * 28}</span>
+          <span class="toc-page">${15 + idx * 8}</span>
         </a>
       `).join('')}
     </div>
@@ -1007,22 +1065,22 @@ export function generateStandaloneBookHtml(book: BookProject): string {
       <a href="#conclusion" class="toc-item">
         <span class="toc-label">Conclusion: The Sovereign Path Forward</span>
         <span class="toc-dots"></span>
-        <span class="toc-page">${15 + book.chapters.length * 28}</span>
+        <span class="toc-page">${15 + book.chapters.length * 8}</span>
       </a>
       <a href="#glossary" class="toc-item">
         <span class="toc-label">Appendix A: Comprehensive Glossary (${book.glossary.length} Terms)</span>
         <span class="toc-dots"></span>
-        <span class="toc-page">${24 + book.chapters.length * 28}</span>
+        <span class="toc-page">${20 + book.chapters.length * 8}</span>
       </a>
       <a href="#bibliography" class="toc-item">
         <span class="toc-label">Appendix B: Bibliography & APA 7th References (${book.bibliography.length} Sources)</span>
         <span class="toc-dots"></span>
-        <span class="toc-page">${32 + book.chapters.length * 28}</span>
+        <span class="toc-page">${26 + book.chapters.length * 8}</span>
       </a>
       <a href="#author-biography" class="toc-item">
         <span class="toc-label">About the Author</span>
         <span class="toc-dots"></span>
-        <span class="toc-page">${42 + book.chapters.length * 28}</span>
+        <span class="toc-page">${32 + book.chapters.length * 8}</span>
       </a>
     </div>
   </section>
@@ -1229,7 +1287,7 @@ export function generateStandaloneBookHtml(book: BookProject): string {
   <section class="page-sheet cover-back" id="cover-back">
     <div>
       <div style="font-family: var(--font-sans); font-size: 8.5pt; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: ${themeColors.gold}; margin-bottom: 10px;">
-        Praise for Autonomous Horizons
+        Praise for ${escapeXml(book.title)}
       </div>
 
       ${book.endorsements.map(e => `
@@ -1241,7 +1299,7 @@ export function generateStandaloneBookHtml(book: BookProject): string {
 
       <div style="margin-top: 0.25in;">
         <div style="font-family: var(--font-display); font-size: 13pt; font-weight: 700; color: #ffffff; margin-bottom: 6px; letter-spacing: 0.05em;">
-          The Definitive Architectural Manual
+          The Definitive Treatise on ${escapeXml(book.subject || book.title)}
         </div>
         <p class="back-synopsis">
           ${escapeXml(book.backCoverSynopsis)}
@@ -1265,7 +1323,7 @@ export function generateStandaloneBookHtml(book: BookProject): string {
             ${escapeXml(book.publisher)}
           </div>
           <div style="font-family: var(--font-sans); font-size: 7.5pt; color: #94a3b8;">
-            COMPUTERS / ARTIFICIAL INTELLIGENCE / ENTERPRISE SYSTEMS
+            ${escapeXml(locMeta.bisac)}
           </div>
         </div>
 

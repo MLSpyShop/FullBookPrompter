@@ -29,7 +29,7 @@ export const SubjectAuthorModal: React.FC<SubjectAuthorModalProps> = ({
   const [authorAffiliation, setAuthorAffiliation] = useState(book.author.affiliation || "");
   const [authorBio, setAuthorBio] = useState(book.author.bio || "");
   const [authorContact, setAuthorContact] = useState(book.author.contact || "");
-  const [chapterCount, setChapterCount] = useState<number>(book.chapters.length || 10);
+  const [chapterCount, setChapterCount] = useState<number>(book.chapters.length || 15);
 
   // Book Meta & Styling
   const [title, setTitle] = useState(book.title);
@@ -129,7 +129,7 @@ export const SubjectAuthorModal: React.FC<SubjectAuthorModalProps> = ({
       setSubtitle("Fault-Tolerant Logical Qubits, Topological Verification, and Post-Quantum Security");
       setTheme("obsidian-crimson");
       setFontPairing("newsreader");
-      setChapterCount(10);
+      setChapterCount(15);
     } else if (presetType === "climate") {
       setSubject("Regenerative Planetary Bio-Economics: Decoupled Circular Metabolism, Closed-Loop Biomanufacturing, and Synthetic Carbon Sequestration Frameworks");
       setAuthorName("Prof. Vivienne Vance");
@@ -141,7 +141,7 @@ export const SubjectAuthorModal: React.FC<SubjectAuthorModalProps> = ({
       setSubtitle("Thermodynamics of Circular Industry, Biomanufacturing, and Ecological Economics");
       setTheme("emerald-press");
       setFontPairing("garamond");
-      setChapterCount(10);
+      setChapterCount(15);
     } else if (presetType === "genomics") {
       setSubject("Programmable Epigenomics and Cellular Rejuvenation: Synthetic Gene Circuits, Molecular Clock Reversal, and High-Fidelity In Vivo Therapeutics");
       setAuthorName("Dr. Elena Chen-O'Connor");
@@ -153,7 +153,7 @@ export const SubjectAuthorModal: React.FC<SubjectAuthorModalProps> = ({
       setSubtitle("Synthetic Gene Circuits, Epigenetic Clock Reversal, and High-Fidelity In Vivo Therapeutics");
       setTheme("oxford-burgundy");
       setFontPairing("merriweather");
-      setChapterCount(10);
+      setChapterCount(15);
     }
   };
 
@@ -454,9 +454,10 @@ export const SubjectAuthorModal: React.FC<SubjectAuthorModalProps> = ({
                     onChange={(e) => setChapterCount(Number(e.target.value))}
                     className="bg-slate-900 border border-amber-500/40 rounded-lg px-2.5 py-1 text-amber-300 font-bold focus:outline-none"
                   >
-                    <option value={8}>8 Chapters (~50k tokens)</option>
-                    <option value={10}>10 Chapters (~65k tokens)</option>
-                    <option value={12}>12 Chapters (~75k tokens)</option>
+                    <option value={15}>15 Chapters (All 65,000 Output Tokens)</option>
+                    <option value={12}>12 Chapters (~50k tokens)</option>
+                    <option value={10}>10 Chapters (~40k tokens)</option>
+                    <option value={8}>8 Chapters (~30k tokens)</option>
                   </select>
                 </div>
               </div>
