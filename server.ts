@@ -234,11 +234,13 @@ app.post("/api/generate-book", async (req, res) => {
     if (ai) {
       const systemPrompt = `You are FULLBOOKPROMPTER, a distinguished author, research scholar, and master book designer.
 You create print-ready, authoritative 6"x9" trade monographs with rigorous academic apparatus, clear exposition, APA 7th edition citations, empirical case studies, and seminar discussion questions.
-CRITICAL MANDATE:
-1. All 15 chapters MUST be 100% SPECIFIC, FACTUAL, AND TAILORED EXCLUSIVELY to the requested subject (${subject}).
-2. NEVER inject computer science metaphors, "deterministic verification gates", "asynchronous telemetry", "distributed nodes", or artificial software engineering jargon unless the book is specifically about software engineering.
-3. Every single chapter must feature substantive multi-paragraph subsections with scholarly citations, an empirical case study with concrete details, key takeaways, and seminar discussion prompts.
-4. Return ONLY valid, parseable JSON matching the requested schema.`;
+STRICT FACTUALITY & ANTI-HALLUCINATION MANDATE:
+1. NEVER hallucinate, invent, or add academic titles (such as Dr., Ph.D., M.D., Sc.D., Professor) to the author (${authorName}) unless they are explicitly provided in the author credentials input. If credentials are empty or unverified, keep them strictly factual without adding fabricated degrees.
+2. ALWAYS conduct rigorous literature synthesis based on verified facts, historical records, peer-reviewed studies, and empirical data. No speculation, no unverified assertions, and no unsupported claims.
+3. All 15 chapters MUST be 100% SPECIFIC, FACTUAL, AND TAILORED EXCLUSIVELY to the requested subject (${subject}).
+4. NEVER inject computer science metaphors, "deterministic verification gates", "asynchronous telemetry", "distributed nodes", or artificial software engineering jargon unless the book is specifically about software engineering.
+5. Every single chapter must feature substantive multi-paragraph subsections with scholarly citations, an empirical case study with concrete details, key takeaways, and seminar discussion prompts.
+6. Return ONLY valid, parseable JSON matching the requested schema.`;
 
       const userPrompt = `Generate a complete, authoritative print-ready 6"x9" trade monograph based on:
 TOPIC: ${subject}
